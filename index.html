@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University — информационная система</title>
+<style>
+:root{--navy:#17365d;--blue:#2864a5;--bg:#f3f6fb;--text:#1d2939;--muted:#667085;--line:#e4e9f1}
+*{box-sizing:border-box}body{margin:0;font-family:Arial, sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,#17365d,#2864a5);color:white;padding:28px 20px}
+.wrap{max-width:1000px;margin:auto;padding:0 16px}
+.brand{display:flex;align-items:center;gap:14px}.logo{font-size:34px}.brand h1{margin:0;font-size:25px}.brand p{margin:6px 0 0;color:#d8e6f7}
+main{max-width:1000px;margin:24px auto;padding:0 16px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 4px 16px #17365d0b}
+h2{font-size:19px;margin:0 0 15px}label{display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}
+input,select{width:100%;padding:11px;border:1px solid #cfd7e3;border-radius:8px;font-size:15px;background:white}
+button{border:0;border-radius:8px;padding:10px 15px;background:var(--blue);color:white;font-weight:bold;cursor:pointer}
+button:hover{filter:brightness(.94)}button.secondary{background:#edf2f8;color:#24415f}button.danger{background:#fff0f0;color:#b42318}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.hidden{display:none!important}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tabs button{background:#edf2f8;color:#24415f}.tabs button.active{background:var(--blue);color:white}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#f4f7fb;padding:16px;border-radius:10px}.stat strong{display:block;font-size:25px;color:var(--navy)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted);background:#fafbfc}
+.notice{padding:10px 12px;background:#ecfdf3;color:#027a48;border-radius:8px;margin-top:12px;font-size:14px}
+.muted{color:var(--muted);font-size:13px}.item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+@media(max-width:600px){.stats{grid-template-columns:1fr}.card{padding:16px}header{padding:22px 0}}
+</style>
+</head>
+<body>
+<header><div class="wrap brand"><div class="logo">🎓</div><div><h1>UNIVERSITY</h1><p>Информационная система университета</p></div></div></header>
+<main>
+<section class="card" id="login">
+<h2>Вход в систему</h2>
+<p class="muted">Демонстрационный учебный проект. Выберите роль для просмотра возможностей.</p>
+<label for="role">Роль пользователя</label>
+<select id="role"><option>Студент</option><option>Преподаватель</option><option>Администратор</option></select>
+<div class="row"><div><label for="username">Логин</label><input id="username" placeholder="Введите логин"></div><div><label for="password">Пароль</label><input id="password" type="password" placeholder="Введите пароль"></div></div>
+<p><button id="loginBtn">Войти</button></p>
+<div class="muted">Для демонстрации подойдут любые логин и пароль.</div>
+</section>
+<section id="app" class="hidden">
+<div class="card row"><div><h2 style="margin:0">Личный кабинет</h2><span class="muted" id="roleLabel"></span></div><button class="secondary" id="logout" style="flex:0 0 auto">Выйти</button></div>
+<div class="tabs" id="tabs"></div>
+<div class="card" id="content"></div>
+</section>
+</main>
+<footer>UNIVERSITY SYSTEM · Практическая работа</footer>
+<script>
+const $=s=>document.querySelector(s);
+let role='Студент', students=['Алина Осмонова','Бекзат Токтосунов','Айдана Садыкова'];
+let grades=[['Алина Осмонова','Математика',5],['Бекзат Токтосунов','История',4],['Айдана Садыкова','Английский',5]];
+let tab='Главная';
+const schedule=[['Понедельник','Математика','09:00'],['Вторник','Программирование','10:00'],['Среда','История','11:00'],['Четверг','Английский язык','09:00'],['Пятница','Информатика','10:00']];
+function table(headers,rows){return `<div style="overflow-x:auto"><table><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
+function tabs(){let items=role==='Студент'?['Главная','Расписание','Оценки']:role==='Преподаватель'?['Главная','Мои группы','Оценки']:['Главная','Студенты','Группы','Расписание'];$('#tabs').innerHTML=items.map(x=>`<button class="${x===tab?'active':''}" data-tab="${x}">${x}</button>`).join('');$('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()})}
+function render(){tabs();let c=$('#content');$('#roleLabel').textContent=role;
+if(tab==='Главная'){c.innerHTML=`<h2>Добро пожаловать!</h2><div class="stats"><div class="stat"><strong>5</strong>Учебных дней</div><div class="stat"><strong>${students.length}</strong>Студентов в списке</div><div class="stat"><strong>${role==='Студент'?'3':'3'}</strong>Доступных раздела</div></div><p class="muted">Вы вошли как: ${role}. Используйте меню, чтобы открыть нужный раздел.</p>`}
+else if(tab==='Расписание'){c.innerHTML='<h2>Расписание занятий</h2>'+table(['День','Предмет','Время'],schedule)}
+else if(tab==='Оценки'){if(role==='Студент'){c.innerHTML='<h2>Мои оценки</h2>'+table(['Предмет','Оценка'],[['Математика',5],['Английский язык',4],['История',5]])}else{c.innerHTML='<h2>Журнал оценок</h2>'+table(['Студент','Предмет','Оценка'],grades)+`<h2 style="margin-top:22px">Выставить оценку</h2><label>Студент</label><select id="gradeStudent">${students.map(s=>`<option>${s}</option>`)}</select><label>Предмет</label><select id="subject"><option>Математика</option><option>Программирование</option><option>История</option><option>Английский язык</option></select><label>Оценка</label><select id="mark"><option>5</option><option>4</option><option>3</option><option>2</option></select><p><button id="saveGrade">Сохранить оценку</button></p><div id="msg"></div>`;$('#saveGrade').onclick=()=>{grades.push([$('#gradeStudent').value,$('#subject').value,$('#mark').value]);render();$('#content').insertAdjacentHTML('beforeend','<div class="notice">Оценка успешно добавлена (в демонстрации).</div>')}}}
+else if(tab==='Мои группы'){c.innerHTML='<h2>Мои группы</h2>'+table(['Группа','Направление','Курс'],[['ИС-1','Информационные системы','1'],['ИС-2','Информационные системы','2']])}
+else if(tab==='Студенты'){c.innerHTML=`<h2>Управление студентами</h2><p class="muted">Количество студентов: ${students.length}</p><div id="studentList">${students.map((s,i)=>`<div class="item"><span>${s}</span><button class="danger" data-remove="${i}">Удалить</button></div>`).join('')}</div><h2 style="margin-top:22px">Добавить студента</h2><label>ФИО</label><input id="newStudent" placeholder="Например, Нурия Асанова"><label>Группа</label><select id="newGroup"><option>ИС-1</option><option>ИС-2</option><option>ИС-3</option></select><p><button id="addStudent">Добавить</button></p><div id="msg"></div>`;$('#addStudent').onclick=()=>{let n=$('#newStudent').value.trim();if(!n)return;students.push(n+' ('+$('#newGroup').value+')');render();$('#content').insertAdjacentHTML('beforeend','<div class="notice">Студент добавлен.</div>')};$('#studentList').querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{students.splice(+b.dataset.remove,1);render()})}
+else if(tab==='Группы'){c.innerHTML='<h2>Управление группами</h2>'+table(['Название группы','Направление','Статус'],[['ИС-1','Информационные системы','Активна'],['ИС-2','Информационные системы','Активна'],['ИС-3','Информационные системы','Активна']])}
+}
+$('#loginBtn').onclick=()=>{role=$('#role').value;$('#login').classList.add('hidden');$('#app').classList.remove('hidden');tab='Главная';render()};
+$('#logout').onclick=()=>{$('#app').classList.add('hidden');$('#login').classList.remove('hidden')};
+</script>
+</body></html>
